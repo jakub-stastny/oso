@@ -41,7 +41,9 @@
 (defn run-filters [content]
   (walk/postwalk replace-href-keywords content))
 
-(defn template [title heading content css-path]
+;; There can be any data in the EDN, but typically there are:
+;; :key, :path, :title, maybe :heading and :content.
+(defn template [{:keys [key title heading content css-path] :as edn-data} css-path]
   (str
    (h/html (h/raw "<!DOCTYPE html>")
            [:html {:lang "en"}
@@ -72,5 +74,5 @@
              [:div.main
               [:my-header]
               [:my-nav]
-              (into [:main] (run-filters content))
+              (into [:main {:id (str (name key) "-page")}] (run-filters content))
               [:my-footer]]]])))
